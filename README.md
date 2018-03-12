@@ -15,6 +15,7 @@ ansible-playbook docker.yml
 ```
 NB. Container1 will listen on 1234 port
     Container2 will listen on 2345 port
+
 3.  To ssh into first container
 password: admin
 ```sh
