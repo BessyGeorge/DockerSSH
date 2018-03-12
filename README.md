@@ -17,8 +17,10 @@ NB. Container1 will listen on 1234 port
     Container2 will listen on 2345 port
 
 3.  To ssh into first container
-password: admin
+
+    (if ask for password use 'admin')
+
 ```sh
-$ ssh root@localhost -p 1234
+$ ssh root@localhost -p 1234 -v
 ```
 
