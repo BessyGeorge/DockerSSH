@@ -1,0 +1,82 @@
+---
+- hosts: localhost
+  tasks:
+    #- name: Create a data container
+    #  docker_container:
+    #    name: mydata
+    #    image: busybox
+
+    #- name: gather container id
+    #  shell: docker ps -aqf "name=mydata" 
+    #  register: container_id
+
+    #- name: debug
+    #  debug:
+    #    msg: " container id is {{ container_id.stdout }}"
+
+
+
+    - name: create docker image image1 using Dockerfile
+      docker_image:
+        name: image1
+        tag: latest
+        path: ~/MY_PROJECTS/ansible/Container1/
+        state: present
+
+
+    - name: inspects docker image data
+      docker_image_facts:
+        name: image1
+      register: facts
+
+    - name: Set the image id
+      set_fact:
+        id: "{{ facts.images[0].Id | regex_replace('^sha256:', '')}}"
+    
+    - name: debug id
+      debug:
+        msg: "image id is {{ id }}"
+
+
+    - name: get the .ssh/id_rsa.pub
+      shell: docker run "{{ id }}" cat /root/.ssh/id_rsa.pub
+      register: pub_key
+
+    - name: debug public key
+      debug:
+        msg: "{{ pub_key.stdout }}" 
+
+    - name: create docker image2
+      docker_image:
+        name: image2
+        tag: latest
+        path: ~/MY_PROJECTS/ansible/Container2/
+        state: present
+        buildargs:
+          SSH_KEY_PUB: "{{ pub_key.stdout }}"
+      
+    - name: run docker container container1
+      docker_container:
+        name: container1
+        image: image1:latest
+        state: started
+        restart: yes
+        ports:
+          - "1234:22"
+      register: container1_facts
+    
+    - name: debug container1_facts
+      debug:
+        msg: "{{ container1_facts }}" 
+
+    - name: run the docker container container2
+      docker_container:
+        name: container2
+        image: image2:latest
+        state: started
+        restart: yes
+        ports:
+          - "2345:22"
+      
+
+  
