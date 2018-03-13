@@ -1,21 +1,6 @@
 ---
 - hosts: localhost
   tasks:
-    #- name: Create a data container
-    #  docker_container:
-    #    name: mydata
-    #    image: busybox
-
-    #- name: gather container id
-    #  shell: docker ps -aqf "name=mydata" 
-    #  register: container_id
-
-    #- name: debug
-    #  debug:
-    #    msg: " container id is {{ container_id.stdout }}"
-
-
-
     - name: create docker image image1 using Dockerfile
       docker_image:
         name: image1
@@ -65,9 +50,6 @@
           - "1234:22"
       register: container1_facts
     
-    - name: debug container1_facts
-      debug:
-        msg: "{{ container1_facts }}" 
 
     - name: run the docker container container2
       docker_container:
